@@ -15,6 +15,7 @@ interface BottomToolbarProps {
   setIsAudioPlaybackEnabled: (val: boolean) => void;
   codec: string;
   onCodecChange: (newCodec: string) => void;
+  onShowAuditTrail?: () => void;
 }
 
 function BottomToolbar({
@@ -31,6 +32,7 @@ function BottomToolbar({
   setIsAudioPlaybackEnabled,
   codec,
   onCodecChange,
+  onShowAuditTrail,
 }: BottomToolbarProps) {
   const isConnected = sessionStatus === "CONNECTED";
   const isConnecting = sessionStatus === "CONNECTING";
@@ -150,6 +152,15 @@ function BottomToolbar({
           <option value="pcma">PCMA (8 kHz)</option>
         </select>
       </div>
+      
+      {onShowAuditTrail && (
+        <button
+          onClick={onShowAuditTrail}
+          className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 text-sm font-medium"
+        >
+          📋 Audit Trail
+        </button>
+      )}
     </div>
   );
 }

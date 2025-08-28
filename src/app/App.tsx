@@ -11,6 +11,7 @@ import Image from "next/image";
 import Transcript from "./components/Transcript";
 import Events from "./components/Events";
 import BottomToolbar from "./components/BottomToolbar";
+import AgentDropdown from "./components/AgentDropdown";
 
 // Types
 import { SessionStatus } from "@/app/types";
@@ -34,9 +35,27 @@ const sdkScenarioMap: Record<string, RealtimeAgent[]> = {
 
 import useAudioDownload from "./hooks/useAudioDownload";
 import { useHandleSessionHistory } from "./hooks/useHandleSessionHistory";
+import { useStorage } from "./hooks/useStorage";
+import { useAuditTrail } from "./hooks/useAuditTrail";
+import AuditTrail from "./components/AuditTrail";
+import { useDocument } from "./hooks/useDocument";
+import { SessionProvider, setGlobalSessionId } from "./contexts/SessionContext";
 
 function App() {
   const searchParams = useSearchParams()!;
+  
+  // Generate session ID for this session
+  const [sessionId] = useState(() => {
+    const id = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    setGlobalSessionId(id);
+    return id;
+  });
+  
+  // Storage and audit trail
+  const { logInteraction } = useStorage();
+  
+  // Document management
+  const { createDocument } = useDocument();
 
   // ---------------------------------------------------------------------
   // Codec selector – lets you toggle between wide-band Opus (48 kHz)
@@ -54,12 +73,34 @@ function App() {
   // via global codecPatch at module load 
 
   const {
-    addTranscriptMessage,
+    addTranscriptMessage: originalAddTranscriptMessage,
     addTranscriptBreadcrumb,
   } = useTranscript();
+
+  // Wrapper to add audit logging to transcript messages
+  const addTranscriptMessage = (itemId: string, role: "user" | "assistant", text: string, isHidden = false) => {
+    // Add to transcript
+    originalAddTranscriptMessage(itemId, role, text, isHidden);
+    
+    // Also log to audit trail
+    if (role === "user") {
+      logUserMessage(text);
+    } else if (role === "assistant") {
+      logAgentMessage(text);
+    }
+  };
   const { logClientEvent, logServerEvent } = useEvent();
 
   const [selectedAgentName, setSelectedAgentName] = useState<string>("");
+  const [previousAgentName, setPreviousAgentName] = useState<string>("");
+  const [showAuditTrail, setShowAuditTrail] = useState(false);
+  
+  // Audit trail integration
+  const { logUserMessage, logAgentMessage } = useAuditTrail({
+    sessionId,
+    currentAgent: selectedAgentName,
+    enabled: true
+  });
   const [selectedAgentConfigSet, setSelectedAgentConfigSet] = useState<
     RealtimeAgent[] | null
   >(null);
@@ -93,9 +134,31 @@ function App() {
     mute,
   } = useRealtimeSession({
     onConnectionChange: (s) => setSessionStatus(s as SessionStatus),
-    onAgentHandoff: (agentName: string) => {
+    onAgentHandoff: async (agentName: string) => {
       handoffTriggeredRef.current = true;
+      
+      // Log handoff event
+      if (previousAgentName) {
+        await logInteraction(sessionId, previousAgentName, {
+          type: 'handoff',
+          content: `Handoff to ${agentName}`,
+          timestamp: new Date().toISOString(),
+          metadata: { toAgent: agentName }
+        });
+      }
+      
+      // Log agent activation
+      await logInteraction(sessionId, agentName, {
+        type: 'handoff',
+        content: `Agent activated`,
+        timestamp: new Date().toISOString(),
+        metadata: { fromAgent: previousAgentName || 'Initial' }
+      });
+      
+      setPreviousAgentName(selectedAgentName);
       setSelectedAgentName(agentName);
+      
+      console.log(`🔄 Agent handoff: ${previousAgentName || 'Initial'} → ${agentName} [Session: ${sessionId}]`);
     },
   });
 
@@ -150,8 +213,14 @@ function App() {
   useEffect(() => {
     if (selectedAgentName && sessionStatus === "DISCONNECTED") {
       connectToRealtime();
+      // Initialize BIAN document for this session
+      createDocument(sessionId).then((doc) => {
+        if (doc) {
+          console.log(`📄 BIAN Document initialized: ${sessionId} (${doc.metadata.completionPercentage}% complete)`);
+        }
+      });
     }
-  }, [selectedAgentName]);
+  }, [selectedAgentName, sessionId, createDocument, sessionStatus]);
 
   useEffect(() => {
     if (
@@ -452,118 +521,108 @@ function App() {
   const agentSetKey = searchParams.get("agentConfig") || "default";
 
   return (
-    <div className="text-base flex flex-col h-screen bg-gray-100 text-gray-800 relative">
-      <div className="p-5 text-lg font-semibold flex justify-between items-center">
-        <div
-          className="flex items-center cursor-pointer"
-          onClick={() => window.location.reload()}
-        >
-          <div>
-            <Image
-              src="/openai-logomark.svg"
-              alt="OpenAI Logo"
-              width={20}
-              height={20}
-              className="mr-2"
-            />
-          </div>
-          <div>
-            JT BANK: Supervisor HUB <span className="text-gray-500">Agents</span>
-          </div>
-        </div>
-        <div className="flex items-center">
-          <label className="flex items-center text-base gap-1 mr-2 font-medium">
-            Work-center
-          </label>
-          <div className="relative inline-block">
-            <select
-              value={agentSetKey}
-              onChange={handleAgentChange}
-              className="appearance-none border border-gray-300 rounded-lg text-base px-2 py-1 pr-8 cursor-pointer font-normal focus:outline-none"
-            >
-              {Object.keys(allAgentSets).map((agentKey) => (
-                <option key={agentKey} value={agentKey}>
-                  {agentKey}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-600">
-              <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  fillRule="evenodd"
-                  d="M5.23 7.21a.75.75 0 011.06.02L10 10.44l3.71-3.21a.75.75 0 111.04 1.08l-4.25 3.65a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"
-                  clipRule="evenodd"
-                />
-              </svg>
+    <SessionProvider sessionId={sessionId}>
+      <div className="text-base flex flex-col h-screen bg-gray-100 text-gray-800 relative">
+        <div className="p-5 text-lg font-semibold flex justify-between items-center">
+          <div
+            className="flex items-center cursor-pointer"
+            onClick={() => window.location.reload()}
+          >
+            <div>
+              <Image
+                src="/openai-logomark.svg"
+                alt="OpenAI Logo"
+                width={20}
+                height={20}
+                className="mr-2"
+              />
+            </div>
+            <div>
+              JT BANK: Supervisor HUB <span className="text-gray-500">Agents</span>
             </div>
           </div>
-
-          {agentSetKey && (
-            <div className="flex items-center ml-6">
-              <label className="flex items-center text-base gap-1 mr-2 font-medium">
-                Agent
-              </label>
-              <div className="relative inline-block">
-                <select
-                  value={selectedAgentName}
-                  onChange={handleSelectedAgentChange}
-                  className="appearance-none border border-gray-300 rounded-lg text-base px-2 py-1 pr-8 cursor-pointer font-normal focus:outline-none"
-                >
-                  {selectedAgentConfigSet?.map((agent) => (
-                    <option key={agent.name} value={agent.name}>
-                      {agent.name}
-                    </option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-600">
-                  <svg
-                    className="h-4 w-4"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.23 7.21a.75.75 0 011.06.02L10 10.44l3.71-3.21a.75.75 0 111.04 1.08l-4.25 3.65a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
+          <div className="flex items-center">
+            <label className="flex items-center text-base gap-1 mr-2 font-medium">
+              Work-center
+            </label>
+            <div className="relative inline-block">
+              <select
+                value={agentSetKey}
+                onChange={handleAgentChange}
+                className="appearance-none border border-gray-300 rounded-lg text-base px-2 py-1 pr-8 cursor-pointer font-normal focus:outline-none"
+              >
+                {Object.keys(allAgentSets).map((agentKey) => (
+                  <option key={agentKey} value={agentKey}>
+                    {agentKey}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-600">
+                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M5.23 7.21a.75.75 0 011.06.02L10 10.44l3.71-3.21a.75.75 0 111.04 1.08l-4.25 3.65a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                    clipRule="evenodd"
+                  />
+                </svg>
               </div>
             </div>
-          )}
-        </div>
-      </div>
 
-      <div className="flex flex-1 gap-2 px-2 overflow-hidden relative">
-        <Transcript
-          userText={userText}
-          setUserText={setUserText}
-          onSendMessage={handleSendTextMessage}
-          downloadRecording={downloadRecording}
-          canSend={
-            sessionStatus === "CONNECTED"
-          }
+            {agentSetKey && (
+              <div className="flex items-center ml-6">
+                <label className="flex items-center text-base gap-1 mr-2 font-medium">
+                  Agent
+                </label>
+                <AgentDropdown
+                  selectedAgentName={selectedAgentName}
+                  agents={selectedAgentConfigSet || []}
+                  onAgentChange={handleSelectedAgentChange}
+                  agentSetKey={agentSetKey}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-1 gap-2 px-2 overflow-hidden relative">
+          <Transcript
+            userText={userText}
+            setUserText={setUserText}
+            onSendMessage={handleSendTextMessage}
+            downloadRecording={downloadRecording}
+            canSend={
+              sessionStatus === "CONNECTED"
+            }
+          />
+
+          <Events isExpanded={isEventsPaneExpanded} />
+        </div>
+        
+        {/* Audit Trail Modal */}
+        <AuditTrail
+          sessionId={sessionId}
+          isVisible={showAuditTrail}
+          onClose={() => setShowAuditTrail(false)}
         />
 
-        <Events isExpanded={isEventsPaneExpanded} />
+        <BottomToolbar
+          sessionStatus={sessionStatus}
+          onToggleConnection={onToggleConnection}
+          isPTTActive={isPTTActive}
+          setIsPTTActive={setIsPTTActive}
+          isPTTUserSpeaking={isPTTUserSpeaking}
+          handleTalkButtonDown={handleTalkButtonDown}
+          handleTalkButtonUp={handleTalkButtonUp}
+          isEventsPaneExpanded={isEventsPaneExpanded}
+          setIsEventsPaneExpanded={setIsEventsPaneExpanded}
+          isAudioPlaybackEnabled={isAudioPlaybackEnabled}
+          setIsAudioPlaybackEnabled={setIsAudioPlaybackEnabled}
+          codec={urlCodec}
+          onCodecChange={handleCodecChange}
+          onShowAuditTrail={() => setShowAuditTrail(true)}
+        />
       </div>
-
-      <BottomToolbar
-        sessionStatus={sessionStatus}
-        onToggleConnection={onToggleConnection}
-        isPTTActive={isPTTActive}
-        setIsPTTActive={setIsPTTActive}
-        isPTTUserSpeaking={isPTTUserSpeaking}
-        handleTalkButtonDown={handleTalkButtonDown}
-        handleTalkButtonUp={handleTalkButtonUp}
-        isEventsPaneExpanded={isEventsPaneExpanded}
-        setIsEventsPaneExpanded={setIsEventsPaneExpanded}
-        isAudioPlaybackEnabled={isAudioPlaybackEnabled}
-        setIsAudioPlaybackEnabled={setIsAudioPlaybackEnabled}
-        codec={urlCodec}
-        onCodecChange={handleCodecChange}
-      />
-    </div>
+    </SessionProvider>
   );
 }
 

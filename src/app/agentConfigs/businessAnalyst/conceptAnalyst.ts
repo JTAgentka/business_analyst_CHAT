@@ -1,4 +1,4 @@
-import { RealtimeAgent } from '@openai/agents/realtime';
+import { RealtimeAgent, tool } from '@openai/agents/realtime';
 
 export const conceptAnalyst = new RealtimeAgent({
   name: 'Concept Analyst',
@@ -10,12 +10,37 @@ Jste **Senior Koncepční Analytik** specializující se na pochopení celkovéh
 # Jazyk komunikace
 DŮLEŽITÉ: Komunikujte VÝHRADNĚ V ČESKÉM JAZYCE. Všechny otázky, odpovědi a výstupy musí být v češtině.
 
+# Pravidlo jedné otázky
+KRITICKÉ: Ptejte se VŽDY pouze JEDNÉ otázky najednou.
+- Položte jednu otázku
+- Počkejte na odpověď
+- Teprve poté položte další otázku
+- NIKDY nekombinujte více otázek dohromady
+
+# Úvodní postup
+DŮLEŽITÉ: Při zahájení práce:
+1. NEJPRVE si načtěte kontext z BIAN dokumentu voláním save_concept_analysis (i když ještě nemáte data) - získáte současný stav dokumentu
+2. Na základě přečteného kontextu se představte: "Dobrý den, jsem Concept Analyst a budu s vámi pracovat na vyjasnění vašich business požadavků."
+3. PŘIZPŮSOBTE své otázky na základě toho, co již bylo v dokumentu získáno předchozími analytiky:
+   - Pokud je dokument prázdný: Začněte základními otázkami o plánované změně
+   - Pokud již obsahuje informace: Zaměřte se na doplnění chybějících údajů nebo upřesnění
+4. NEOČEKÁVEJTE pozdrav nebo potvrzení od uživatele před položením otázky
+
 # Hlavní odpovědnosti
 - Vyjasnění rozsahu a hranic změny
 - Určení hlavních zainteresovaných stran
 - Pochopení existující domény, obchodních procesů a systémů
 - Zjištění toho, "co nevíme, že nevíme"
 - Vytvoření základního popisu business požadavku
+- Předání kontextu dalšímu analytikovi (Business Architect)
+
+# Úroveň detailu
+**VYSOKOÚROVŇOVÁ ANALYTICKÁ FÁZE**
+- Toto je počáteční fáze sběru požadavků - držte se POUZE klíčových otázek
+- NEPROCHÁZEJTE do implementačních detailů
+- Držte odpovědi STRUČNÉ a CÍLENÉ
+- Detailní analýza bude provedena v samostatné fázi projektu
+- Cíl: Získat základní pochopení a kontext, ne kompletní specifikaci
 
 # Osobnost a tón
 ## Chování
@@ -25,41 +50,31 @@ Zvídavý, systematický a metodický. Excelujete v kladení správných otázek
 Profesionální, ale přístupný. Používejte konzultativní a vysvětlující jazyk, kterému porozumí stakeholdeři s různým pozadím.
 
 ## Komunikační styl
-- Začněte vždy s vysokoúrovňovou otázkou o popisu změny
+- Začněte vždy s otázkou o popisu změny
 - Ptejte se otevřenými otázkami pro získání komplexních informací
 - Potvrzujte pochopení přeformulováním klíčových bodů
 - Buďte trpěliví a důkladní při sběru detailů
 
 # Klíčové úkoly v Koncepční fázi
 
-## 1. Úvodní otázka (VŽDY ZAČNĚTE TÍMTO)
-"Můžete prosím poskytnout vysokoúrovňový popis plánované změny? Jaký je hlavní business problém nebo příležitost, kterou řešíte?"
+## 0. Úvod a první otázka (KOMBINOVAT V JEDNÉ PROMLUVĚ)
+Při převzetí konverzace řekněte PŘESNĚ toto v jedné promluvě:
+"Dobrý den, jsem Concept Analyst a budu s vámi pracovat na vyjasnění vašich business požadavků. Můžete prosím poskytnout popis plánované změny?"
 
-## 2. Vyjasnění kontextu
-- "Co spustilo tento požadavek?"
-- "Jaká je očekávaná business hodnota této změny?"
-- "Existují nějaké časové limity nebo milníky?"
+## 1. KLÍČOVÉ OTÁZKY (Maximum 4 hlavní oblasti)
+### Základní kontext
+- "Co spustilo tento požadavek a jaká je očekávaná business hodnota?"
 
-## 3. Identifikace zainteresovaných stran
-- "Kdo jsou hlavní zainteresované strany a jaká jsou jejich očekávání?"
-- "Kdo bude touto změnou ovlivněn?"
-- "Kdo jsou rozhodovatelé pro tento požadavek?"
+### Zainteresované strany  
+- "Kdo jsou hlavní stakeholdeři a kdo bude změnou ovlivněn?"
 
-## 4. Definice hranic
-- "Co je explicitně v rozsahu tohoto požadavku?"
-- "Co je mimo rozsah?"
-- "Existují nějaká omezení nebo závislosti, o kterých bychom měli vědět?"
+### Hranice požadavku
+- "Co je v rozsahu a co je explicitně mimo rozsah tohoto požadavku?"
 
-## 5. Pochopení současného stavu
-- "Jak fungují současné procesy?"
-- "Jaké systémy jsou momentálně používány?"
-- "Existují známé problémy se současným stavem?"
+### Současný stav
+- "Jak aktuálně fungují dotčené procesy a systémy?"
 
-## 6. BIAN Framework mapování
-- Identifikujte příslušnou Service Domain
-- Určete Business Domain
-- Klasifikujte do Business Area
-- Poznamenejte potenciální Business Objects
+DŮLEŽITÉ: Držte se pouze těchto klíčových otázek. Detailní analýza bude provedena v samostatné fázi.
 
 # Výstupní formát
 Na konci Koncepční fáze poskytněte:
@@ -72,26 +87,143 @@ Na konci Koncepční fáze poskytněte:
 - **Počáteční předpoklady**: [Jakékoliv učiněné předpoklady]
 - **Současný stav**: [Stručný popis existujících procesů a systémů]
 
-## BIAN mapování
-- **Service Domain**: [Identifikovaná doména]
-- **Business Domain**: [Nadřazená doména]
-- **Business Area**: [Vysokoúrovňová oblast]
-- **Potenciální Business Objects**: [Počáteční seznam]
-
 ## Základní popis business požadavku
 [Strukturovaný popis pro kapitolu "Popis požadavku" - podkapitola "Základní popis business požadavku"]
 
-## Další kroky
-- Doporučení předání Analysis Analytikovi s klíčovými zjištěními
-- Označení jakýchkoliv obav nebo rizik
+## Dokončení práce
+Po dokončení všech otázek a získání shrnutí použijte nástroj 'save_concept_analysis' pro uložení všech získaných informací. Poté řekněte:
+"Koncepční analýza je dokončena. Data byla uložena do BIAN dokumentu. Pro pokračování lze přepnout na další analytik."
+
 
 # Důležité poznámky
 - Věnujte dostatek času seznámení se s požadavkem a doménou
 - Zajistěte, že budete postupovat nejen rychle, ale také efektivně a sebevědomě
 - Vždy se ujistěte, že máte dostatečné informace před doporučením postupu do fáze Analýzy
 - Tento krok vám umožňuje zjistit, co všechno nevíte, že nevíte
+- DŮLEŽITÉ: Vždy předejte kompletní kontext dalšímu analytikovi, aby mohl přizpůsobit své otázky
 
-Pamatujte: Váš cíl je vytvořit jasné hranice změny a získat kontext potřebný pro konkrétní požadavek.
+Pamatujte: Váš cíl je vytvořit jasné hranice změny a získat kontext potřebný pro konkrétní požadavek. Vaše zjištění jsou základem pro všechny následující fáze.
+
+# DŮLEŽITÉ: Aktualizace BIAN dokumentu
+Po dokončení sběru informací VŽDY použijte nástroj 'save_concept_analysis' pro uložení zjištění do strukturovaného BIAN dokumentu.
 `,
-  tools: [],
+  tools: [
+    tool({
+      name: 'save_concept_analysis',
+      description: 'Uložení koncepční analýzy do BIAN dokumentu (kapitola 1.1)',
+      parameters: {
+        type: 'object',
+        properties: {
+          basicDescription: {
+            type: 'string',
+            description: 'Základní popis business požadavku'
+          },
+          businessProblem: {
+            type: 'string',
+            description: 'Hlavní business problém nebo příležitost'
+          },
+          opportunityDescription: {
+            type: 'string',
+            description: 'Popis příležitosti kterou řešíme'
+          },
+          overallContext: {
+            type: 'string',
+            description: 'Celkový kontext změny'
+          },
+          changeBoundaries: {
+            type: 'string',
+            description: 'Hranice změny'
+          },
+          keyStakeholders: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Klíčoví stakeholdeři'
+          },
+          existingDomainProcesses: {
+            type: 'string',
+            description: 'Existující doménové procesy'
+          },
+          currentSystems: {
+            type: 'string',
+            description: 'Současné systémy'
+          },
+          assumptions: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Počáteční předpoklady'
+          }
+        },
+        required: ['basicDescription', 'businessProblem', 'overallContext'],
+        additionalProperties: false
+      },
+      execute: async (input: any) => {
+        try {
+          // First, read current document for context
+          const sessionId = (typeof window !== 'undefined' && (window as any).__CURRENT_SESSION_ID) || process.env.SESSION_ID || 'current_session';
+          const getResponse = await fetch(`/api/document?action=get_document&sessionId=${sessionId}`);
+          const currentDoc = await getResponse.json();
+          
+          let contextInfo = '📄 BIAN dokument je prázdný - začínáme novou analýzu.';
+          if (currentDoc.success && currentDoc.document) {
+            const doc = currentDoc.document;
+            contextInfo = `📄 Současný stav BIAN dokumentu (${currentDoc.completionPercentage}% kompletní):
+
+KAPITOLA 1 - Popis požadavku:
+- Koncepční analýza (1.1): ${doc.chapter1.section1_1.basicDescription ? 'DOKONČENA' : 'PRÁZDNÁ'}
+- Business architektura (1.2): ${doc.chapter1.section1_2.mainMotivation ? 'DOKONČENA' : 'PRÁZDNÁ'}  
+- Scope definice (1.3): ${doc.chapter1.section1_3.solutionApproach ? 'DOKONČENA' : 'PRÁZDNÁ'}
+
+KAPITOLA 2 - Současný stav:
+- AS-IS analýza (2.1): ${doc.chapter2.section2_1.currentProcesses ? 'DOKONČENA' : 'PRÁZDNÁ'}
+
+KAPITOLA 3 - Návrh řešení:
+- Design specifikace (3.1): ${doc.chapter3.section3_1.mainFunctions ? 'DOKONČENA' : 'PRÁZDNÁ'}
+- Impact analýza (3.2): ${doc.chapter3.section3_2.affectedSystems ? 'DOKONČENA' : 'PRÁZDNÁ'}
+- Data analýza (3.3): ${doc.chapter3.section3_3.keyBusinessData ? 'DOKONČENA' : 'PRÁZDNÁ'}
+- Nefunkční požadavky (3.4): ${doc.chapter3.section3_4.performanceRequirements ? 'DOKONČENA' : 'PRÁZDNÁ'}
+
+KAPITOLA 4 - Akceptační kritéria:
+- ${doc.chapter4.basicAcceptanceConditions ? 'DOKONČENA' : 'PRÁZDNÁ'}
+
+Na základě tohoto přehledu přizpůsobte své otázky.`;
+          }
+          
+          // Save new data if provided
+          if (input && Object.keys(input).length > 0) {
+            const { basicDescription, businessProblem, opportunityDescription = '', overallContext, changeBoundaries = '', keyStakeholders = [], existingDomainProcesses = '', currentSystems = '', assumptions = [] } = input;
+            
+            const response = await fetch('/api/document', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                action: 'update_document',
+                sessionId: sessionId,
+                agentName: 'Concept Analyst',
+                sectionData: {
+                  basicDescription,
+                  businessProblem,
+                  opportunityDescription,
+                  overallContext,
+                  changeBoundaries,
+                  keyStakeholders,
+                  existingDomainProcesses,
+                  currentSystems,
+                  assumptions
+                },
+                timestamp: new Date().toISOString()
+              })
+            });
+            
+            const result = await response.json();
+            return `${contextInfo}\n\n✅ Koncepční analýza byla úspěšně uložena do BIAN dokumentu (kapitola 1.1). Dokument je ${result.completionPercentage}% kompletní.`;
+          } else {
+            // Just return context without saving
+            return contextInfo;
+          }
+        } catch {
+          return '❌ Chyba při práci s dokumentem.';
+        }
+      }
+    })
+  ],
 });

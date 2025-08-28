@@ -1,0 +1,155 @@
+{
+  "metadata": {
+    "sessionId": "current_session",
+    "createdAt": "2025-08-28T21:51:38.718Z",
+    "lastUpdatedAt": "2025-08-28T22:19:38.987Z",
+    "lastUpdatedBy": "Concept Analyst",
+    "version": "1.0.0",
+    "status": "draft",
+    "completionPercentage": 17
+  },
+  "chapter1": {
+    "section1_1": {
+      "basicDescription": "Nahrazení stávajících aplikací pro správu dotazníků (AML, KYC a investiční) konsolidovaným řešením do jedné aplikace.",
+      "businessProblem": "Složitá administrace, komplikované verzování a rozstříštěnost řešení přes různé systémy.",
+      "opportunityDescription": "",
+      "overallContext": "Cílem je do 06/2025 nahradit existující systémy jedním řešením pro správu dotazníků a vylepšit administrativní i uživatelské prostředí.",
+      "changeBoundaries": "",
+      "keyStakeholders": [],
+      "existingDomainProcesses": "",
+      "currentSystems": "",
+      "assumptions": [],
+      "updatedBy": "Concept Analyst",
+      "updatedAt": "2025-08-28T22:19:38.987Z"
+    },
+    "section1_2": {
+      "mainMotivation": "",
+      "businessProblem": "",
+      "expectedBenefits": "",
+      "measurableGoals": [],
+      "successCriteria": [],
+      "stakeholderAnalysis": {
+        "mainStakeholders": [],
+        "conflictingExpectations": [],
+        "agreedPriorities": []
+      },
+      "updatedBy": "",
+      "updatedAt": ""
+    },
+    "section1_3": {
+      "solutionApproach": "Preferované krabicové řešení, pokud dostupné.",
+      "areasOfChange": [
+        "CRM systém",
+        "onboarding proces"
+      ],
+      "explicitExclusions": [],
+      "futurePhasesExcluded": [],
+      "criticalDependencies": [
+        "Nasazení do června 2025"
+      ],
+      "scopeConfirmation": "Rozsah v souladu s očekáváními všech stakeholderů",
+      "implementationStrategy": "",
+      "updatedBy": "Scope Architect",
+      "updatedAt": "2025-08-28T21:56:09.266Z"
+    }
+  },
+  "chapter2": {
+    "section2_1": {
+      "currentProcesses": "",
+      "currentProblems": [],
+      "currentSystems": [],
+      "businessDrivers": "",
+      "currentStateAnalysis": "",
+      "identifiedIssues": [],
+      "technicalFeasibility": "",
+      "businessFeasibility": "",
+      "risksAndLimitations": [],
+      "updatedBy": "",
+      "updatedAt": ""
+    }
+  },
+  "chapter3": {
+    "section3_1": {
+      "mainFunctionality": [
+        "CRM systém",
+        "onboarding proces"
+      ],
+      "userExperience": "Moderní, responsivní design, s minimem kroků pro uživatele.",
+      "dataAndIntegration": "Klíčová data zahrnují zákaznické údaje a transakční data, s integrací na externí ERP systémy.",
+      "processChanges": [
+        "Stejné jako dosud"
+      ],
+      "basicCriteria": [
+        "Všechny dříve definované funkce a výkonnostní metriky"
+      ],
+      "detailedRequirements": [
+        "Zachování stávajících procesů s modernizovaným UI"
+      ],
+      "userScenarios": [
+        "Uživatel provádí onboarding snadno v moderním UI"
+      ],
+      "integrationPoints": [
+        "Externí ERP systémy"
+      ],
+      "updatedBy": "Design Architect",
+      "updatedAt": "2025-08-28T21:58:33.972Z"
+    },
+    "section3_2": {
+      "affectedSystems": [],
+      "systemImpacts": [],
+      "technicalDependencies": [],
+      "implementationComplexity": "",
+      "implementationSequence": [],
+      "riskAssessment": [],
+      "updatedBy": "",
+      "updatedAt": ""
+    },
+    "section3_3": {
+      "keyBusinessData": [],
+      "dataEntities": [],
+      "dataAttributes": [],
+      "gdprCompliance": "",
+      "dataPrivacy": [],
+      "dataQuality": "",
+      "dataFlows": [],
+      "validationRules": [],
+      "reportingNeeds": [],
+      "updatedBy": "",
+      "updatedAt": ""
+    },
+    "section3_4": {
+      "performanceRequirements": {
+        "responseTime": "",
+        "throughput": "",
+        "availability": ""
+      },
+      "userExperience": {
+        "usabilityRequirements": [],
+        "accessibilityRequirements": []
+      },
+      "securityCompliance": {
+        "securityRequirements": [],
+        "complianceStandards": []
+      },
+      "scalabilityIntegration": {
+        "scalabilityRequirements": "",
+        "integrationStandards": []
+      },
+      "updatedBy": "",
+      "updatedAt": ""
+    }
+  },
+  "chapter4": {
+    "basicAcceptanceConditions": [],
+    "businessCriteria": [],
+    "performanceCriteria": [],
+    "testingStrategy": "",
+    "acceptanceProcess": "",
+    "measurableAcceptanceCriteria": [],
+    "testScenarios": [],
+    "successMetrics": [],
+    "definitionOfDone": [],
+    "updatedBy": "",
+    "updatedAt": ""
+  }
+}
