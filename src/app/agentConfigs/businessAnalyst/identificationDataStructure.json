@@ -1,0 +1,197 @@
+{
+  "sections": {
+    "1_identification": {
+      "label": "Identifikace klienta",
+      "fields": {
+        "client_name": {
+          "label": "Jméno klienta",
+          "type": "string",
+          "required": true,
+          "description": "Jméno klienta včetně diakritiky"
+        },
+        "client_surname": {
+          "label": "Příjmení klienta",
+          "type": "string",
+          "required": true,
+          "description": "Příjmení klienta včetně diakritiky"
+        },
+        "client_birth_date": {
+          "label": "Datum narození klienta",
+          "type": "string",
+          "format": "DD.MM.YYYY",
+          "required": true,
+          "description": "Datum narození ve formátu DD.MM.RRRR"
+        },
+        "has_representative": {
+          "label": "Jedná za klienta zástupce",
+          "type": "boolean",
+          "required": true,
+          "description": "Zda osoba jedná za klienta jako jeho zástupce"
+        },
+        "representative_name": {
+          "label": "Jméno zástupce",
+          "type": "string",
+          "required": false,
+          "condition": "has_representative === true",
+          "description": "Jméno zástupce klienta"
+        },
+        "representative_surname": {
+          "label": "Příjmení zástupce",
+          "type": "string",
+          "required": false,
+          "condition": "has_representative === true",
+          "description": "Příjmení zástupce klienta"
+        },
+        "representative_birth_date": {
+          "label": "Datum narození zástupce",
+          "type": "string",
+          "format": "DD.MM.YYYY",
+          "required": false,
+          "condition": "has_representative === true",
+          "description": "Datum narození zástupce ve formátu DD.MM.RRRR"
+        }
+      }
+    },
+    "2_contract_purpose": {
+      "label": "Účel smlouvy",
+      "fields": {
+        "contract_purposes": {
+          "label": "Účel uzavření smlouvy s J&T Bankou",
+          "type": "array",
+          "required": true,
+          "multiple": true,
+          "options": [
+            {
+              "value": "A",
+              "label": "vedení běžného účtu a platební styk",
+              "description": "Vedení běžného účtu a platební styk"
+            },
+            {
+              "value": "B",
+              "label": "ochrana finančního majetku",
+              "description": "Ochrana mého finančního majetku"
+            },
+            {
+              "value": "C",
+              "label": "zhodnocení finančního majetku",
+              "description": "Zhodnocení mého finančního majetku"
+            },
+            {
+              "value": "D",
+              "label": "tvorba finančního majetku",
+              "description": "Tvorba finančního majetku prostřednictvím pravidelných investic"
+            },
+            {
+              "value": "E",
+              "label": "jiný důvod",
+              "description": "Z jiného důvodu"
+            }
+          ]
+        },
+        "other_purpose_description": {
+          "label": "Popis jiného důvodu",
+          "type": "string",
+          "required": false,
+          "condition": "contract_purposes.includes('E')",
+          "description": "Upřesnění jiného důvodu pro uzavření smlouvy"
+        }
+      }
+    },
+    "3_pep_status": {
+      "label": "Politicky exponovaná osoba (PEP)",
+      "fields": {
+        "pep_status": {
+          "label": "Status PEP",
+          "type": "string",
+          "required": true,
+          "options": [
+            {
+              "value": "A",
+              "label": "nejsem PEP",
+              "description": "Nejsem politicky exponovanou osobou"
+            },
+            {
+              "value": "B",
+              "label": "jsem PEP",
+              "description": "Jsem politicky exponovanou osobou"
+            }
+          ]
+        },
+        "pep_reason": {
+          "label": "Důvod PEP statusu",
+          "type": "string",
+          "required": false,
+          "condition": "pep_status === 'B'",
+          "description": "Důvod, proč je klient politicky exponovanou osobou (funkce, vztah, apod.)"
+        }
+      }
+    },
+    "4_tax_residence": {
+      "label": "Daňová rezidence",
+      "fields": {
+        "tax_residences": {
+          "label": "Státy daňové rezidence",
+          "type": "array",
+          "required": true,
+          "items": {
+            "type": "object",
+            "properties": {
+              "country": {
+                "label": "Stát",
+                "type": "string",
+                "required": true,
+                "description": "Název státu daňové rezidence"
+              },
+              "tax_id": {
+                "label": "DIČ",
+                "type": "string",
+                "required": false,
+                "description": "Daňové identifikační číslo v daném státě (může být 'neuvedeno' nebo 'nevlastní')"
+              }
+            }
+          }
+        }
+      }
+    },
+    "5_fatca": {
+      "label": "FATCA prohlášení",
+      "fields": {
+        "fatca_status": {
+          "label": "Status podle FATCA",
+          "type": "string",
+          "required": true,
+          "options": [
+            {
+              "value": "A",
+              "label": "nejsem občan/rezident USA",
+              "description": "Nejsem občanem, rezidentem Spojených států amerických ani nevlastním Zelenou kartu"
+            },
+            {
+              "value": "B",
+              "label": "jsem občan/rezident USA",
+              "description": "Jsem občanem, rezidentem Spojených států amerických nebo vlastním Zelenou kartu"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "conversation_states": [
+    "0_uvod",
+    "1_klient_jmeno",
+    "1_klient_datum_narozeni",
+    "1_zastupce_kontrola",
+    "2_ucel_smlouvy",
+    "3_pep",
+    "4_danova_rezidence",
+    "5_fatca",
+    "6_shrnuti_potvrzeni",
+    "7_ukonceni"
+  ],
+  "validation_rules": {
+    "date_format": "DD.MM.YYYY",
+    "required_sections": ["1_identification", "2_contract_purpose", "3_pep_status", "4_tax_residence", "5_fatca"],
+    "allow_corrections": true,
+    "require_confirmation": true
+  }
+}
