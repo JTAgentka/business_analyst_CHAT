@@ -40,8 +40,8 @@ interface Section1 {
 
 interface BRDocument {
   metadata: BRDocumentMetadata;
-  'Section 1': Partial<Section1>;
-  'Section 2': Record<string, any>;
+  section1_sponsorIdea: Partial<Section1>;
+  section2_stakeholderPerspectives: any[];
   'Section 3': Record<string, any>;
   'Section 4': Record<string, any>;
   'Section 5': Record<string, any>;
@@ -68,7 +68,7 @@ const getDefaultDocument = (): BRDocument => ({
     status: 'draft',
     completionPercentage: 0
   },
-  'Section 1': {
+  section1_sponsorIdea: {
     businessPozadavek: '',
     businessCil: '',
     hraniceRozsahu: {
@@ -85,7 +85,7 @@ const getDefaultDocument = (): BRDocument => ({
       zdrojDat: 'manualEntry'
     }
   },
-  'Section 2': {},
+  section2_stakeholderPerspectives: [],
   'Section 3': {},
   'Section 4': {},
   'Section 5': {},
@@ -140,14 +140,15 @@ export const readBRDocument = tool({
     properties: {
       sectionFilter: {
         type: 'string',
-        description: 'Optional: Specific section to read (e.g., "Section 1", "Section 2", etc.)',
-        enum: ['Section 1', 'Section 2', 'Section 3', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
+        description: 'Optional: Specific section to read (e.g., "section1_sponsorIdea", "section2_stakeholderPerspectives", etc.)',
+        enum: ['section1_sponsorIdea', 'section2_stakeholderPerspectives', 'Section 3', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
       }
     },
     required: [],
     additionalProperties: false
   },
-  execute: async ({ sectionFilter }: { sectionFilter?: string } = {}) => {
+  execute: async (input: unknown) => {
+    const { sectionFilter } = (input as { sectionFilter?: string }) || {};
     try {
       ensureOutputDirectory();
       
@@ -194,8 +195,8 @@ export const writeBRDocument = tool({
     properties: {
       section: {
         type: 'string',
-        description: 'Section to update (e.g., "Section 1", "Section 2", etc.)',
-        enum: ['Section 1', 'Section 2', 'Section 3', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
+        description: 'Section to update (e.g., "section1_sponsorIdea", "section2_stakeholderPerspectives", etc.)',
+        enum: ['section1_sponsorIdea', 'section2_stakeholderPerspectives', 'Section 3', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
       },
       data: {
         type: 'object',
@@ -216,12 +217,17 @@ export const writeBRDocument = tool({
     required: ['section', 'data', 'agentName'],
     additionalProperties: false
   },
-  execute: async ({ section, data, agentName, mergeStrategy = 'merge' }: { 
-    section: string; 
-    data: any; 
-    agentName: string; 
-    mergeStrategy?: 'replace' | 'merge' | 'deep' 
-  }) => {
+  execute: async (input: unknown) => {
+    const { section, data = {}, agentName, mergeStrategy = 'merge' } = input as { 
+      section: string; 
+      data?: any; 
+      agentName: string; 
+      mergeStrategy?: 'replace' | 'merge' | 'deep' 
+    };
+    
+    // Ensure data is not null or undefined
+    const safeData = data || {};
+    
     try {
       ensureOutputDirectory();
       
@@ -261,12 +267,46 @@ export const writeBRDocument = tool({
       // Update the section based on merge strategy
       const sectionKey = section as keyof BRDocument;
       
-      if (mergeStrategy === 'replace') {
-        (document as any)[sectionKey] = data;
-      } else if (mergeStrategy === 'merge') {
-        (document as any)[sectionKey] = { ...document[sectionKey], ...data };
-      } else if (mergeStrategy === 'deep') {
-        (document as any)[sectionKey] = deepMerge(document[sectionKey], data);
+      // Special handling for section2_stakeholderPerspectives (array)
+      if (sectionKey === 'section2_stakeholderPerspectives') {
+        if (mergeStrategy === 'replace') {
+          (document as any)[sectionKey] = safeData;
+        } else {
+          // For merge and deep strategies, append to array if data is an item, replace if data is array
+          if (Array.isArray(safeData)) {
+            (document as any)[sectionKey] = safeData;
+          } else {
+            // Append single item to array
+            if (!Array.isArray(document[sectionKey])) {
+              (document as any)[sectionKey] = [];
+            }
+            
+            // Check if this stakeholder already exists (to avoid duplicates)
+            const existingPerspectives = (document as any)[sectionKey];
+            const stakeholderName = safeData?.stakeholder?.jmeno;
+            
+            if (stakeholderName) {
+              // Remove any existing perspective from the same stakeholder
+              const filteredPerspectives = existingPerspectives.filter((p: any) => 
+                p?.stakeholder?.jmeno !== stakeholderName
+              );
+              // Add the new perspective
+              (document as any)[sectionKey] = [...filteredPerspectives, safeData];
+            } else {
+              // If no stakeholder name, just append
+              (document as any)[sectionKey].push(safeData);
+            }
+          }
+        }
+      } else {
+        // Standard object handling for other sections
+        if (mergeStrategy === 'replace') {
+          (document as any)[sectionKey] = safeData;
+        } else if (mergeStrategy === 'merge') {
+          (document as any)[sectionKey] = { ...document[sectionKey], ...safeData };
+        } else if (mergeStrategy === 'deep') {
+          (document as any)[sectionKey] = deepMerge(document[sectionKey], safeData);
+        }
       }
 
       // Update metadata

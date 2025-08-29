@@ -543,7 +543,7 @@ function App() {
           </div>
           <div className="flex items-center">
             <label className="flex items-center text-base gap-1 mr-2 font-medium">
-              Work-center
+              Nová idea
             </label>
             <div className="relative inline-block">
               <select
@@ -571,7 +571,7 @@ function App() {
             {agentSetKey && (
               <div className="flex items-center ml-6">
                 <label className="flex items-center text-base gap-1 mr-2 font-medium">
-                  Agent
+                  Workcenter
                 </label>
                 <AgentDropdown
                   selectedAgentName={selectedAgentName}

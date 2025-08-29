@@ -16,8 +16,8 @@ interface BRDocumentMetadata {
 
 interface BRDocument {
   metadata: BRDocumentMetadata;
-  'Section 1': Record<string, any>;
-  'Section 2': Record<string, any>;
+  section1_sponsorIdea: Record<string, any>;
+  section2_stakeholderPerspectives: any[];
   'Section 3': Record<string, any>;
   'Section 4': Record<string, any>;
   'Section 5': Record<string, any>;
@@ -44,7 +44,7 @@ const getDefaultDocument = (): BRDocument => ({
     status: 'draft',
     completionPercentage: 0
   },
-  'Section 1': {
+  section1_sponsorIdea: {
     businessPozadavek: '',
     businessCil: '',
     hraniceRozsahu: {
@@ -61,7 +61,7 @@ const getDefaultDocument = (): BRDocument => ({
       zdrojDat: 'manualEntry'
     }
   },
-  'Section 2': {},
+  section2_stakeholderPerspectives: [],
   'Section 3': {},
   'Section 4': {},
   'Section 5': {},
@@ -131,7 +131,7 @@ const deepMerge = (target: any, source: any): any => {
   return result;
 };
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     ensureOutputDirectory();
     
@@ -187,12 +187,46 @@ export async function POST(request: NextRequest) {
     // Update the section based on merge strategy
     const sectionKey = section as keyof BRDocument;
     
-    if (mergeStrategy === 'replace') {
-      (document as any)[sectionKey] = data;
-    } else if (mergeStrategy === 'merge') {
-      (document as any)[sectionKey] = { ...document[sectionKey], ...data };
-    } else if (mergeStrategy === 'deep') {
-      (document as any)[sectionKey] = deepMerge(document[sectionKey], data);
+    // Special handling for section2_stakeholderPerspectives (array)
+    if (sectionKey === 'section2_stakeholderPerspectives') {
+      if (mergeStrategy === 'replace') {
+        (document as any)[sectionKey] = data;
+      } else {
+        // For merge and deep strategies, append to array if data is an item, replace if data is array
+        if (Array.isArray(data)) {
+          (document as any)[sectionKey] = data;
+        } else {
+          // Append single item to array
+          if (!Array.isArray(document[sectionKey])) {
+            (document as any)[sectionKey] = [];
+          }
+          
+          // Check if this stakeholder already exists (to avoid duplicates)
+          const existingPerspectives = (document as any)[sectionKey];
+          const stakeholderName = data?.stakeholder?.jmeno;
+          
+          if (stakeholderName) {
+            // Remove any existing perspective from the same stakeholder
+            const filteredPerspectives = existingPerspectives.filter((p: any) => 
+              p?.stakeholder?.jmeno !== stakeholderName
+            );
+            // Add the new perspective
+            (document as any)[sectionKey] = [...filteredPerspectives, data];
+          } else {
+            // If no stakeholder name, just append
+            (document as any)[sectionKey].push(data);
+          }
+        }
+      }
+    } else {
+      // Standard object handling for other sections
+      if (mergeStrategy === 'replace') {
+        (document as any)[sectionKey] = data;
+      } else if (mergeStrategy === 'merge') {
+        (document as any)[sectionKey] = { ...document[sectionKey], ...data };
+      } else if (mergeStrategy === 'deep') {
+        (document as any)[sectionKey] = deepMerge(document[sectionKey], data);
+      }
     }
 
     // Update metadata

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, FC, PropsWithChildren } from "react";
+import React, { createContext, useContext, useState, FC, PropsWithChildren, useCallback, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { LoggedEvent } from "@/app/types";
 
@@ -16,21 +16,49 @@ const EventContext = createContext<EventContextValue | undefined>(undefined);
 
 export const EventProvider: FC<PropsWithChildren> = ({ children }) => {
   const [loggedEvents, setLoggedEvents] = useState<LoggedEvent[]>([]);
+  const eventQueueRef = useRef<Set<string>>(new Set());
+  const lastEventTimeRef = useRef<{ [key: string]: number }>({});
 
-  function addLoggedEvent(direction: "client" | "server", eventName: string, eventData: Record<string, any>) {
+  const addLoggedEvent = useCallback((direction: "client" | "server", eventName: string, eventData: Record<string, any>) => {
     const id = eventData.event_id || uuidv4();
-    setLoggedEvents((prev) => [
-      ...prev,
-      {
-        id,
-        direction,
-        eventName,
-        eventData,
-        timestamp: new Date().toLocaleTimeString(),
-        expanded: false,
-      },
-    ]);
-  }
+    const eventKey = `${direction}-${eventName}-${JSON.stringify(eventData)}`;
+    const now = Date.now();
+    
+    // Prevent duplicate events within 100ms
+    if (lastEventTimeRef.current[eventKey] && (now - lastEventTimeRef.current[eventKey]) < 100) {
+      return;
+    }
+    
+    // Prevent adding the same event if it's already being processed
+    if (eventQueueRef.current.has(eventKey)) {
+      return;
+    }
+    
+    eventQueueRef.current.add(eventKey);
+    lastEventTimeRef.current[eventKey] = now;
+    
+    setLoggedEvents((prev) => {
+      // Limit to last 100 events to prevent memory issues
+      const newEvents = [
+        ...prev,
+        {
+          id,
+          direction,
+          eventName,
+          eventData,
+          timestamp: new Date().toLocaleTimeString(),
+          expanded: false,
+        },
+      ].slice(-100);
+      
+      // Clean up the queue after state update
+      setTimeout(() => {
+        eventQueueRef.current.delete(eventKey);
+      }, 0);
+      
+      return newEvents;
+    });
+  }, []);
 
   const logClientEvent: EventContextValue["logClientEvent"] = (eventObj, eventNameSuffix = "") => {
     const name = `${eventObj.type || ""} ${eventNameSuffix || ""}`.trim();

@@ -1,39 +1,5 @@
 import { tool } from '@openai/agents/realtime';
 
-interface BRDocumentMetadata {
-  sessionId: string;
-  createdAt: string;
-  lastUpdatedAt: string;
-  lastUpdatedBy: string;
-  version: string;
-  status: string;
-  completionPercentage: number;
-}
-
-interface Stakeholder {
-  jmeno: string;
-  role: string;
-  ovlivneniZmenou: string;
-}
-
-interface Section1 {
-  businessPozadavek: string;
-  businessCil: string;
-  hraniceRozsahu: {
-    vRozsahu: string;
-    mimoRozsah: string;
-  };
-  stakeholderi: Stakeholder[];
-  spousteciUdalost: string;
-  ocekavanaHodnota: string;
-  pocatecniPredpoklady: string[];
-  metadata: {
-    datumAnalyzy: string;
-    analytik: string;
-    zdrojDat: 'manualEntry' | 'imported' | 'updatedByOtherAgent';
-  };
-}
-
 export const readBRDocument = tool({
   name: 'read_BR_document',
   description: 'Read the complete BR document from BR_document.json file',
@@ -42,14 +8,15 @@ export const readBRDocument = tool({
     properties: {
       sectionFilter: {
         type: 'string',
-        description: 'Optional: Specific section to read (e.g., "Section 1", "Section 2", etc.)',
-        enum: ['Section 1', 'Section 2', 'Section 3', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
+        description: 'Optional: Specific section to read (e.g., "section1_sponsorIdea", "section2_stakeholderPerspectives", etc.)',
+        enum: ['section1_sponsorIdea', 'section2_stakeholderPerspectives', 'Section 3', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
       }
     },
     required: [],
     additionalProperties: false
   },
-  execute: async ({ sectionFilter }: { sectionFilter?: string } = {}) => {
+  execute: async (input: unknown) => {
+    const { sectionFilter } = (input as { sectionFilter?: string }) || {};
     try {
       const response = await fetch('/api/br-document', {
         method: 'GET',
@@ -93,18 +60,18 @@ export const readBRDocument = tool({
 
 export const writeBRDocument = tool({
   name: 'write_BR_document',
-  description: 'Write or update data in the BR_document.json file. For Section 1, provide data with the correct structure including businessPozadavek, businessCil, hraniceRozsahu, stakeholderi, etc.',
+  description: 'Write or update data in the BR_document.json file. For section1_sponsorIdea, provide data with the correct structure including businessPozadavek, businessCil, hraniceRozsahu, stakeholderi, etc. For section2_stakeholderPerspectives, provide an array of stakeholder perspectives.',
   parameters: {
     type: 'object',
     properties: {
       section: {
         type: 'string',
-        description: 'Section to update (e.g., "Section 1", "Section 2", etc.)',
-        enum: ['Section 1', 'Section 2', 'Section 3', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
+        description: 'Section to update (e.g., "section1_sponsorIdea", "section2_stakeholderPerspectives", etc.)',
+        enum: ['section1_sponsorIdea', 'section2_stakeholderPerspectives', 'Section 3', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
       },
       data: {
         type: 'object',
-        description: 'Data to write or update in the specified section. For Section 1, use structure with businessPozadavek, businessCil, hraniceRozsahu, stakeholderi, etc.',
+        description: 'Data to write or update in the specified section. For section1_sponsorIdea, use structure with businessPozadavek, businessCil, hraniceRozsahu, stakeholderi, etc. For section2_stakeholderPerspectives, provide array items or full array.',
         additionalProperties: true
       },
       agentName: {
@@ -121,19 +88,24 @@ export const writeBRDocument = tool({
     required: ['section', 'data', 'agentName'],
     additionalProperties: false
   },
-  execute: async ({ section, data, agentName, mergeStrategy = 'merge' }: { 
-    section: string; 
-    data: any; 
-    agentName: string; 
-    mergeStrategy?: 'replace' | 'merge' | 'deep' 
-  }) => {
+  execute: async (input: unknown) => {
+    const { section, data = {}, agentName, mergeStrategy = 'merge' } = input as { 
+      section: string; 
+      data?: any; 
+      agentName: string; 
+      mergeStrategy?: 'replace' | 'merge' | 'deep' 
+    };
+    
+    // Ensure data is not null or undefined
+    const safeData = data || {};
+    
     try {
       const response = await fetch('/api/br-document', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           section,
-          data,
+          data: safeData,
           agentName,
           mergeStrategy
         })

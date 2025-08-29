@@ -1,0 +1,137 @@
+{
+  "metadata": {
+    "sessionId": "session_1756473964137_tf4rt673f",
+    "createdAt": "2025-08-29T13:26:04.516Z",
+    "lastUpdatedAt": "2025-08-29T13:26:04.516Z",
+    "lastUpdatedBy": "System",
+    "version": "1.0.0",
+    "status": "draft",
+    "completionPercentage": 0
+  },
+  "chapter1": {
+    "section1_1": {
+      "basicDescription": "",
+      "businessProblem": "",
+      "opportunityDescription": "",
+      "overallContext": "",
+      "changeBoundaries": "",
+      "keyStakeholders": [],
+      "existingDomainProcesses": "",
+      "currentSystems": "",
+      "assumptions": [],
+      "updatedBy": "",
+      "updatedAt": ""
+    },
+    "section1_2": {
+      "mainMotivation": "",
+      "businessProblem": "",
+      "expectedBenefits": "",
+      "measurableGoals": [],
+      "successCriteria": [],
+      "stakeholderAnalysis": {
+        "mainStakeholders": [],
+        "conflictingExpectations": [],
+        "agreedPriorities": []
+      },
+      "updatedBy": "",
+      "updatedAt": ""
+    },
+    "section1_3": {
+      "solutionApproach": "",
+      "areasOfChange": [],
+      "explicitExclusions": [],
+      "futurePhasesExcluded": [],
+      "criticalDependencies": [],
+      "scopeConfirmation": "",
+      "implementationStrategy": "",
+      "updatedBy": "",
+      "updatedAt": ""
+    }
+  },
+  "chapter2": {
+    "section2_1": {
+      "currentProcesses": "",
+      "currentProblems": [],
+      "currentSystems": [],
+      "businessDrivers": "",
+      "currentStateAnalysis": "",
+      "identifiedIssues": [],
+      "technicalFeasibility": "",
+      "businessFeasibility": "",
+      "risksAndLimitations": [],
+      "updatedBy": "",
+      "updatedAt": ""
+    }
+  },
+  "chapter3": {
+    "section3_1": {
+      "mainFunctionality": [],
+      "userExperience": "",
+      "dataAndIntegration": "",
+      "processChanges": [],
+      "basicCriteria": [],
+      "detailedRequirements": [],
+      "userScenarios": [],
+      "integrationPoints": [],
+      "updatedBy": "",
+      "updatedAt": ""
+    },
+    "section3_2": {
+      "affectedSystems": [],
+      "systemImpacts": [],
+      "technicalDependencies": [],
+      "implementationComplexity": "",
+      "implementationSequence": [],
+      "riskAssessment": [],
+      "updatedBy": "",
+      "updatedAt": ""
+    },
+    "section3_3": {
+      "keyBusinessData": [],
+      "dataEntities": [],
+      "dataAttributes": [],
+      "gdprCompliance": "",
+      "dataPrivacy": [],
+      "dataQuality": "",
+      "dataFlows": [],
+      "validationRules": [],
+      "reportingNeeds": [],
+      "updatedBy": "",
+      "updatedAt": ""
+    },
+    "section3_4": {
+      "performanceRequirements": {
+        "responseTime": "",
+        "throughput": "",
+        "availability": ""
+      },
+      "userExperience": {
+        "usabilityRequirements": [],
+        "accessibilityRequirements": []
+      },
+      "securityCompliance": {
+        "securityRequirements": [],
+        "complianceStandards": []
+      },
+      "scalabilityIntegration": {
+        "scalabilityRequirements": "",
+        "integrationStandards": []
+      },
+      "updatedBy": "",
+      "updatedAt": ""
+    }
+  },
+  "chapter4": {
+    "basicAcceptanceConditions": [],
+    "businessCriteria": [],
+    "performanceCriteria": [],
+    "testingStrategy": "",
+    "acceptanceProcess": "",
+    "measurableAcceptanceCriteria": [],
+    "testScenarios": [],
+    "successMetrics": [],
+    "definitionOfDone": [],
+    "updatedBy": "",
+    "updatedAt": ""
+  }
+}

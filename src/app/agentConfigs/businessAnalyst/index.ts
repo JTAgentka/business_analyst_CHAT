@@ -1,5 +1,5 @@
 import { stakeholderRoom } from './stakeholderRoom';
-import { businessArchitect } from './businessArchitect';
+import { ideaGeneratorRoom } from './ideaGeneratorRoom';
 import { scopeArchitect } from './scopeArchitect';
 import { designArchitect } from './designArchitect';
 import { impactAnalyst } from './impactAnalyst';
@@ -9,10 +9,10 @@ import { qualityAnalyst } from './qualityAnalyst';
 
 // Manual switching only - no automatic handoffs configured
 
-// Export the complete Business Analyst scenario with Stakeholder Room as the entry point
+// Export the complete Business Analyst scenario with Idea Generator Room as the entry point
 export const businessAnalystScenario = [
+  ideaGeneratorRoom,
   stakeholderRoom,
-  businessArchitect,
   scopeArchitect,
   designArchitect,
   impactAnalyst,

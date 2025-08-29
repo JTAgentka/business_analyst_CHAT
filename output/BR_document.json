@@ -1,0 +1,134 @@
+{
+  "metadata": {
+    "sessionId": "current_session",
+    "createdAt": "2025-08-29T13:05:52.151Z",
+    "lastUpdatedAt": "2025-08-29T13:54:02.040Z",
+    "lastUpdatedBy": "Stakeholder Room",
+    "version": "1.0.0",
+    "status": "draft",
+    "completionPercentage": 97
+  },
+  "section1_sponsorIdea": {
+    "businessPozadavek": "Nahrazení aplikací pro správu dotazníků novou aplikací, která všechny konsoliduje",
+    "businessCil": "Zjednodušení administrace dotazníků, eliminace duplicit a zjednodušení vyplnění pro klienta",
+    "hraniceRozsahu": {
+      "vRozsahu": "Nahrazení AML, KYC a investičního dotazníku, zajištění přístupu k administraci, nové administrativní a prezentační rozhraní pro klienty a pracovníky banky",
+      "mimoRozsah": "Nemění se algoritmus vyhodnocení"
+    },
+    "stakeholderi": [
+      {
+        "jmeno": "Investiční centrum",
+        "role": "Stakeholder",
+        "ovlivneniZmenou": "Jednodušší administrace, eliminace dvojitosti, lepší uživatelská zkušenost"
+      },
+      {
+        "jmeno": "Bankovní centrum",
+        "role": "Stakeholder",
+        "ovlivneniZmenou": "Jednodušší administrace, eliminace dvojitosti, lepší uživatelská zkušenost"
+      },
+      {
+        "jmeno": "Compliance",
+        "role": "Stakeholder",
+        "ovlivneniZmenou": "Jednodušší administrace, eliminace dvojitosti, lepší uživatelská zkušenost"
+      }
+    ],
+    "spousteciUdalost": "Složitá administrace, komplikované verzování a roztříštěnost řešení přes různé systémy",
+    "ocekavanaHodnota": "Zjednodušení administrace, eliminace duplicit, lepší zkušenost pro klienta",
+    "pocatecniPredpoklady": [
+      "Musí být hotové do 06/25",
+      "Je to předpoklad ke zrušení původní CRM aplikace, která má zaniknout a aktuálně provozuje toto řešení"
+    ],
+    "metadata": {
+      "datumAnalyzy": "2025-08-29",
+      "analytik": "Idea Generator Room",
+      "zdrojDat": "manualEntry"
+    }
+  },
+  "section2_stakeholderPerspectives": [
+    {
+      "stakeholder": {
+        "jmeno": "Investiční centrum",
+        "role": "Stakeholder"
+      },
+      "perspective": {
+        "businessPozadavek": "Primárně se zaměřujeme na investiční dotazník a simulaci pro investiční poradenství, které chceme také zjednodušit.",
+        "businessCil": "Nabízet větší šíři investičních produktů díky lepší kontrole nad otázkami a lepšímu flow.",
+        "hraniceRozsahu": {
+          "vRozsahu": "Nutné zahrnout ty dvě aplikace, jak bylo zmíněno.",
+          "mimoRozsah": ""
+        },
+        "spousteciUdalost": "Vysoké procento lidí, kteří po vyhodnocení nedosáhnou na širší portfolio.",
+        "ocekavanaHodnota": "Zlepšení uživatelské zkušenosti a lepší řízení otázek a sekcí dotazníku.",
+        "pocatecniPredpoklady": [
+          "Zůstanou stejné algoritmy na vyhodnocení, ale zlepšíme uživatelskou zkušenost klientovi v rámci investičního dotazníku a budeme schopni lépe řídit otázky a sekce."
+        ],
+        "metadata": {
+          "datumAnalyzy": "2025-08-29",
+          "analytik": "Stakeholder: Investiční centrum",
+          "zdrojDat": "manualEntry"
+        }
+      }
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+    {
+      "stakeholder": {
+        "jmeno": "Bankovní centrum",
+        "role": "Stakeholder"
+      },
+      "perspective": {
+        "businessPozadavek": "Podporujeme jednoduchou administraci a zjednodušené vyplnění dotazníků pro klienty, což výrazně zlepší efektivitu a uživatelskou spokojenost.",
+        "businessCil": "Chceme dosáhnout lepší integrace a přístupu ke všem dotazníkům prostřednictvím jednoho rozhraní, což zjednoduší práci našim pracovníkům a zákazníkům.",
+        "hraniceRozsahu": {
+          "vRozsahu": "Vyžaduje kompletní nahrazení dosavadních procesů a přístupů k dotazníkům.",
+          "mimoRozsah": "Nemění se analytické metody vyhodnocování a rozhodovací procesy na základě výsledků dotazníků."
+        },
+        "spousteciUdalost": "Složitost současných procesů a potřeba jednotného přístupu k dotazníkům.",
+        "ocekavanaHodnota": "Zefektivnění administrativních činností, snížení nákladů a zlepšení doby odezvy pro klienty.",
+        "pocatecniPredpoklady": [
+          "Zůstanou stávající postupy pro zpracování a analýzu dat.",
+          "Další integrace systémů bude zajištěna později, po stabilizaci nové aplikace."
+        ]
+      },
+      "metadata": {
+        "datumAnalyzy": "2025-08-29",
+        "analytik": "Stakeholder: Bankovní centrum",
+        "zdrojDat": "manualEntry"
+      }
+    },
+    {
+      "stakeholder": {
+        "jmeno": "Tomáš Jedno",
+        "role": "Compliance"
+      },
+      "perspective": {
+        "businessPozadavek": "Souhlasím s tím, že nový systém musí mít nový front-end, zatímco stávající procesy zůstanou, ale musí být přepracovány a napojeny na nový systém.",
+        "businessCil": "Zajistit spojení všech procesů s novým systémem a jejich efektivní fungování.",
+        "hraniceRozsahu": {
+          "vRozsahu": "Všechny stávající procesy musí být přepracovány a napojeny na nový systém.",
+          "mimoRozsah": "Zůstanou stejné algoritmy vyhodnocení."
+        },
+        "spousteciUdalost": "Přechod na nový systém a potřeba modernizace front-endu.",
+        "ocekavanaHodnota": "Zajištění hladké integrace a zlepšení uživatelského zážitku díky novému front-endu.",
+        "pocatecniPredpoklady": [
+          "Procesy zůstanou zachovány, ale budou přepracovány pro nový systém."
+        ]
+      },
+      "metadata": {
+        "datumAnalyzy": "2025-08-29",
+        "analytik": "Stakeholder: Tomáš Jedno",
+        "zdrojDat": "manualEntry"
+      }
+    }
+  ],
+  "Section 3": {},
+  "Section 4": {},
+  "Section 5": {},
+  "Section 6": {},
+  "Section 7": {},
+  "Section 8": {},
+  "Section 9": {}
+}
