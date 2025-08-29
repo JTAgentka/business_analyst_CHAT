@@ -19,12 +19,21 @@ KRITICKÉ: Ptejte se VŽDY pouze JEDNÉ otázky najednou.
 
 # Úvodní postup
 DŮLEŽITÉ: Při zahájení práce:
-1. NEJPRVE si načtěte kontext z BIAN dokumentu voláním save_concept_analysis (i když ještě nemáte data) - získáte současný stav dokumentu
-2. Na základě přečteného kontextu se představte: "Dobrý den, jsem Concept Analyst a budu s vámi pracovat na vyjasnění vašich business požadavků."
-3. PŘIZPŮSOBTE své otázky na základě toho, co již bylo v dokumentu získáno předchozími analytiky:
-   - Pokud je dokument prázdný: Začněte základními otázkami o plánované změně
-   - Pokud již obsahuje informace: Zaměřte se na doplnění chybějících údajů nebo upřesnění
-4. NEOČEKÁVEJTE pozdrav nebo potvrzení od uživatele před položením otázky
+1. NEJPRVE zavolejte nástroj 'read_session_context' pro získání kompletního kontextu předchozí konverzace
+2. POTÉ si načtěte kontext z BIAN dokumentu voláním save_concept_analysis (i když ještě nemáte data) - získáte současný stav dokumentu
+3. Na základě OBOU kontextů (konverzace + dokument) se představte: "Dobrý den, jsem Concept Analyst a budu s vámi pracovat na vyjasnění vašich business požadavků."
+4. PŘIZPŮSOBTE své otázky na základě toho, co již bylo v dokumentu získáno předchozími analytiky A co bylo diskutováno v předchozí konverzaci:
+   - Pokud je dokument prázdný a není žádná historie: Začněte základními otázkami o plánované změně
+   - Pokud již obsahuje informace nebo historii: Zaměřte se na doplnění chybějících údajů nebo upřesnění, navažte na předchozí diskuzi
+5. NEOČEKÁVEJTE pozdrav nebo potvrzení od uživatele před položením otázky
+
+# Využití kontextu předchozí konverzace
+KRITICKÉ: Vždy jako první krok zavolejte nástroj 'read_session_context' pro získání kontextu:
+- Pokud existuje předchozí konverzace, MUSÍTE na ni navázat
+- Neopakujte otázky, které již byly zodpovězeny jiným agentem
+- Použijte informace z předchozí diskuze pro upřesnění vašich otázek
+- Referencujte předchozí odpovědi: "Jak jste zmínil/a [agentovi X]..."
+- Stavte na již získaných informacích místo začínání od začátku
 
 # Hlavní odpovědnosti
 - Vyjasnění rozsahu a hranic změny
@@ -58,8 +67,12 @@ Profesionální, ale přístupný. Používejte konzultativní a vysvětlující
 # Klíčové úkoly v Koncepční fázi
 
 ## 0. Úvod a první otázka (KOMBINOVAT V JEDNÉ PROMLUVĚ)
-Při převzetí konverzace řekněte PŘESNĚ toto v jedné promluvě:
-"Dobrý den, jsem Concept Analyst a budu s vámi pracovat na vyjasnění vašich business požadavků. Můžete prosím poskytnout popis plánované změny?"
+Při převzetí konverzace:
+1. NEJPRVE zavolejte 'read_session_context' pro získání kontextu
+2. POTÉ zavolejte 'save_concept_analysis' pro získání stavu dokumentu
+3. Na základě kontextu upravte úvodní větu:
+   - Pokud není žádná historie: "Dobrý den, jsem Concept Analyst a budu s vámi pracovat na vyjasnění vašich business požadavků. Můžete prosím poskytnout popis plánované změny?"
+   - Pokud již byla diskuze s jiným agentem: "Dobrý den, jsem Concept Analyst. Vidím, že jste již diskutovali s [název agenta] o [shrnutí tématu]. Pojďme nyní pokračovat v upřesnění business požadavků. [relevantní otázka navazující na předchozí kontext]"
 
 ## 1. KLÍČOVÉ OTÁZKY (Maximum 4 hlavní oblasti)
 ### Základní kontext
@@ -108,6 +121,81 @@ Pamatujte: Váš cíl je vytvořit jasné hranice změny a získat kontext potř
 Po dokončení sběru informací VŽDY použijte nástroj 'save_concept_analysis' pro uložení zjištění do strukturovaného BIAN dokumentu.
 `,
   tools: [
+    tool({
+      name: 'read_session_context',
+      description: 'Načte kompletní kontext aktuální session včetně předchozích konverzací s jinými agenty',
+      parameters: {
+        type: 'object',
+        properties: {},
+        required: [],
+        additionalProperties: false
+      },
+      execute: async () => {
+        try {
+          const sessionId = (typeof window !== 'undefined' && (window as any).__CURRENT_SESSION_ID) || process.env.SESSION_ID || 'current_session';
+          
+          // Read audit trail from all agents
+          const auditResponse = await fetch(`/api/storage?action=get_audit_trail&sessionId=${sessionId}`);
+          const auditData = await auditResponse.json();
+          
+          if (auditData.success && auditData.auditTrail && auditData.auditTrail.length > 0) {
+            const conversations = auditData.auditTrail;
+            
+            // Group conversations by agent
+            const agentConversations: any = {};
+            conversations.forEach((entry: any) => {
+              if (!agentConversations[entry.agentName]) {
+                agentConversations[entry.agentName] = [];
+              }
+              agentConversations[entry.agentName].push(entry);
+            });
+            
+            let contextSummary = `📜 KONTEXT PŘEDCHOZÍ KONVERZACE:\n\n`;
+            
+            for (const [agentName, messages] of Object.entries(agentConversations)) {
+              if (agentName === 'Concept Analyst') continue; // Skip own previous conversations
+              
+              contextSummary += `Agent: ${agentName}\n`;
+              contextSummary += `Počet interakcí: ${(messages as any[]).length}\n`;
+              
+              // Get last few meaningful interactions
+              const relevantMessages = (messages as any[])
+                .filter((m: any) => m.type === 'question' || m.type === 'answer')
+                .slice(-5); // Last 5 Q&A pairs
+              
+              if (relevantMessages.length > 0) {
+                contextSummary += `Poslední diskutovaná témata:\n`;
+                relevantMessages.forEach((msg: any) => {
+                  const role = msg.metadata?.source === 'user' ? 'Uživatel' : 'Agent';
+                  const shortContent = msg.content.length > 200 ? msg.content.substring(0, 200) + '...' : msg.content;
+                  contextSummary += `- ${role}: ${shortContent}\n`;
+                });
+              }
+              contextSummary += `\n`;
+            }
+            
+            // Also read current session data if available
+            const sessionResponse = await fetch(`/api/storage?action=get_session_data&sessionId=${sessionId}`);
+            const sessionData = await sessionResponse.json();
+            
+            if (sessionData.success && sessionData.data && Object.keys(sessionData.data).length > 0) {
+              contextSummary += `\n📋 ULOŽENÁ DATA Z PŘEDCHOZÍCH AGENTŮ:\n`;
+              for (const [agent, data] of Object.entries(sessionData.data)) {
+                if (agent === 'Concept Analyst') continue;
+                contextSummary += `${agent}: ${JSON.stringify((data as any).data, null, 2).substring(0, 500)}...\n`;
+              }
+            }
+            
+            return contextSummary + `\n\nNa základě tohoto kontextu přizpůsobte své otázky a navažte na předchozí diskuzi.`;
+          } else {
+            return '📜 Žádná předchozí konverzace nebyla nalezena. Začněte s úvodními otázkami.';
+          }
+        } catch (error) {
+          console.error('Error reading session context:', error);
+          return '❌ Chyba při čtení kontextu session. Pokračujte bez předchozího kontextu.';
+        }
+      }
+    }),
     tool({
       name: 'save_concept_analysis',
       description: 'Uložení koncepční analýzy do BIAN dokumentu (kapitola 1.1)',
