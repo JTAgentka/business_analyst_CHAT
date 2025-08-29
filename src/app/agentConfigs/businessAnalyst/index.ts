@@ -1,4 +1,4 @@
-import { conceptAnalyst } from './conceptAnalyst';
+import { stakeholderRoom } from './stakeholderRoom';
 import { businessArchitect } from './businessArchitect';
 import { scopeArchitect } from './scopeArchitect';
 import { designArchitect } from './designArchitect';
@@ -9,9 +9,9 @@ import { qualityAnalyst } from './qualityAnalyst';
 
 // Manual switching only - no automatic handoffs configured
 
-// Export the complete Business Analyst scenario with Concept Analyst as the entry point
+// Export the complete Business Analyst scenario with Stakeholder Room as the entry point
 export const businessAnalystScenario = [
-  conceptAnalyst,
+  stakeholderRoom,
   businessArchitect,
   scopeArchitect,
   designArchitect,
