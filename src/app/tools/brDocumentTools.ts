@@ -42,7 +42,7 @@ interface BRDocument {
   metadata: BRDocumentMetadata;
   section1_sponsorIdea: Partial<Section1>;
   section2_stakeholderPerspectives: any[];
-  'Section 3': Record<string, any>;
+  section3_scopeDefinition: Record<string, any>;
   'Section 4': Record<string, any>;
   'Section 5': Record<string, any>;
   'Section 6': Record<string, any>;
@@ -86,7 +86,7 @@ const getDefaultDocument = (): BRDocument => ({
     }
   },
   section2_stakeholderPerspectives: [],
-  'Section 3': {},
+  section3_scopeDefinition: {},
   'Section 4': {},
   'Section 5': {},
   'Section 6': {},
@@ -141,7 +141,7 @@ export const readBRDocument = tool({
       sectionFilter: {
         type: 'string',
         description: 'Optional: Specific section to read (e.g., "section1_sponsorIdea", "section2_stakeholderPerspectives", etc.)',
-        enum: ['section1_sponsorIdea', 'section2_stakeholderPerspectives', 'Section 3', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
+        enum: ['section1_sponsorIdea', 'section2_stakeholderPerspectives', 'section3_scopeDefinition', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
       }
     },
     required: [],
@@ -196,7 +196,7 @@ export const writeBRDocument = tool({
       section: {
         type: 'string',
         description: 'Section to update (e.g., "section1_sponsorIdea", "section2_stakeholderPerspectives", etc.)',
-        enum: ['section1_sponsorIdea', 'section2_stakeholderPerspectives', 'Section 3', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
+        enum: ['section1_sponsorIdea', 'section2_stakeholderPerspectives', 'section3_scopeDefinition', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
       },
       data: {
         type: 'object',

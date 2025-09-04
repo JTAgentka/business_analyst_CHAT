@@ -18,7 +18,7 @@ interface BRDocument {
   metadata: BRDocumentMetadata;
   section1_sponsorIdea: Record<string, any>;
   section2_stakeholderPerspectives: any[];
-  'Section 3': Record<string, any>;
+  section3_scopeDefinition: Record<string, any>;
   'Section 4': Record<string, any>;
   'Section 5': Record<string, any>;
   'Section 6': Record<string, any>;
@@ -62,7 +62,7 @@ const getDefaultDocument = (): BRDocument => ({
     }
   },
   section2_stakeholderPerspectives: [],
-  'Section 3': {},
+  section3_scopeDefinition: {},
   'Section 4': {},
   'Section 5': {},
   'Section 6': {},

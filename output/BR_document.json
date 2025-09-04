@@ -2,11 +2,11 @@
   "metadata": {
     "sessionId": "current_session",
     "createdAt": "2025-08-29T13:05:52.151Z",
-    "lastUpdatedAt": "2025-08-29T13:54:02.040Z",
-    "lastUpdatedBy": "Stakeholder Room",
+    "lastUpdatedAt": "2025-08-29T20:50:54.592Z",
+    "lastUpdatedBy": "Enterprise Room",
     "version": "1.0.0",
     "status": "draft",
-    "completionPercentage": 97
+    "completionPercentage": 95
   },
   "section1_sponsorIdea": {
     "businessPozadavek": "Nahrazení aplikací pro správu dotazníků novou aplikací, která všechny konsoliduje",
@@ -130,5 +130,121 @@
   "Section 6": {},
   "Section 7": {},
   "Section 8": {},
-  "Section 9": {}
+  "Section 9": {},
+  "section3_scopeDefinition": {
+    "pristupReseni": {
+      "typReseni": "Nový vývoj",
+      "hlavniKomponenty": [
+        "Backend",
+        "Frontend",
+        "Integrace"
+      ],
+      "strategieImplementace": "Postupná implementace s pilotní fází"
+    },
+    "procesy": {
+      "dotceneProcesy": [
+        "AML dotazník",
+        "KYC dotazník",
+        "Investiční dotazník"
+      ],
+      "typZmeny": "Napojení na novou aplikaci"
+    },
+    "bianDomeny": {
+      "navrhAgentem": [
+        "Customer Offer",
+        "Product Deployment"
+      ],
+      "potvrzeneKlientem": [
+        "Customer Offer",
+        "Product Deployment"
+      ],
+      "stav": "Potvrzeno"
+    },
+    "touchpointy": {
+      "impaktovaneKanaly": [
+        "Klient-web",
+        "Banka-web",
+        "Banka-desktop"
+      ],
+      "strategie": {
+        "typ": "Multi-purpose single-channel",
+        "proJedinyUcel": "",
+        "kanaly": [
+          "Web",
+          "Desktop"
+        ]
+      }
+    },
+    "data": {
+      "dotceneEntity": [
+        "Customer",
+        "Questionnaire",
+        "Response"
+      ],
+      "noveEntity": [
+        "UnifiedQuestionnaire"
+      ],
+      "migraceDat": "Migrace stávajících odpovědí do nového formátu",
+      "datovaKvalita": "Validace a čištění dat před migrací"
+    },
+    "systemy": {
+      "dotceneSystemy": [
+        "CRM",
+        "AML System",
+        "KYC System"
+      ],
+      "integrace": [
+        "API",
+        "Kafka"
+      ],
+      "technickeZavislosti": [
+        "Stávající CRM musí zůstat funkční do 06/25"
+      ],
+      "omezeni": [
+        "Zachování stávajících algoritmů vyhodnocení"
+      ]
+    },
+    "businessProcesy": {
+      "dotceneProcesy": [
+        "Onboarding klienta",
+        "Investiční poradenství",
+        "Compliance review"
+      ],
+      "noveProcesy": [
+        "Jednotná administrace dotazníků"
+      ],
+      "zmenyRoli": "Bankovní pracovníci budou používat jednotné rozhraní",
+      "dopadyNaWorkflow": [
+        "Zjednodušení workflow pro vyplnění dotazníků"
+      ]
+    },
+    "mimoRozsah": {
+      "explicitneVylouceno": [
+        "Změna algoritmů vyhodnocení",
+        "Změna business logiky"
+      ],
+      "budouciFaze": [
+        "Rozšíření na další typy dotazníků",
+        "Mobilní aplikace"
+      ],
+      "bezeZmeny": [
+        "Algoritmy vyhodnocení",
+        "Rozhodovací procesy"
+      ]
+    },
+    "konfirmaceRozsahu": {
+      "status": "Potvrzeno",
+      "stakeholderi": [
+        "Investiční centrum",
+        "Bankovní centrum",
+        "Compliance"
+      ],
+      "otevreneBody": []
+    },
+    "metadata": {
+      "datumAnalyzy": "2025-08-29T20:38:50.197Z",
+      "analytik": "Enterprise Room Test",
+      "zdrojDat": "manualEntry"
+    }
+  }
 }

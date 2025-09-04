@@ -9,7 +9,7 @@ export const readBRDocument = tool({
       sectionFilter: {
         type: 'string',
         description: 'Optional: Specific section to read (e.g., "section1_sponsorIdea", "section2_stakeholderPerspectives", etc.)',
-        enum: ['section1_sponsorIdea', 'section2_stakeholderPerspectives', 'Section 3', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
+        enum: ['section1_sponsorIdea', 'section2_stakeholderPerspectives', 'section3_scopeDefinition', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
       }
     },
     required: [],
@@ -67,7 +67,7 @@ export const writeBRDocument = tool({
       section: {
         type: 'string',
         description: 'Section to update (e.g., "section1_sponsorIdea", "section2_stakeholderPerspectives", etc.)',
-        enum: ['section1_sponsorIdea', 'section2_stakeholderPerspectives', 'Section 3', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
+        enum: ['section1_sponsorIdea', 'section2_stakeholderPerspectives', 'section3_scopeDefinition', 'Section 4', 'Section 5', 'Section 6', 'Section 7', 'Section 8', 'Section 9']
       },
       data: {
         type: 'object',

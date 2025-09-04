@@ -1,6 +1,6 @@
 import { stakeholderRoom } from './stakeholderRoom';
 import { ideaGeneratorRoom } from './ideaGeneratorRoom';
-import { scopeArchitect } from './scopeArchitect';
+import { enterpriseRoom } from './enterpriseRoom';
 import { designArchitect } from './designArchitect';
 import { impactAnalyst } from './impactAnalyst';
 import { dataAnalyst } from './dataAnalyst';
@@ -13,7 +13,7 @@ import { qualityAnalyst } from './qualityAnalyst';
 export const businessAnalystScenario = [
   ideaGeneratorRoom,
   stakeholderRoom,
-  scopeArchitect,
+  enterpriseRoom,
   designArchitect,
   impactAnalyst,
   dataAnalyst,
